@@ -1,42 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Click and Drag</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<title>Draggable Cubes</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+        user-select: none;
+    }
+
+    .container {
+        width: 600px;
+        height: 400px;
+        border: 3px solid #333;
+        margin: 30px auto;
+        position: relative;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        grid-template-rows: repeat(3, 1fr);
+        gap: 10px;
+        padding: 10px;
+    }
+
+    .cube {
+        background: #4db8ff;
+        border: 2px solid #005f91;
+        border-radius: 8px;
+        transition: background 0.2s;
+        cursor: grab;
+        position: relative;
+    }
+
+    .cube:active {
+        cursor: grabbing;
+        background: #1ca3ff;
+    }
+</style>
 </head>
 <body>
-  <div class="items">
-    <div class="item item1">01</div>
-    <div class="item item2">02</div>
-    <div class="item item3">03</div>
-    <div class="item item4">04</div>
-    <div class="item item5">05</div>
-    <div class="item item6">06</div>
-    <div class="item item7">07</div>
-    <div class="item item8">08</div>
-    <div class="item item9">09</div>
-    <div class="item item10">10</div>
-    <div class="item item11">11</div>
-    <div class="item item12">12</div>
-    <div class="item item13">13</div>
-    <div class="item item14">14</div>
-    <div class="item item15">15</div>
-    <div class="item item16">16</div>
-    <div class="item item17">17</div>
-    <div class="item item18">18</div>
-    <div class="item item19">19</div>
-    <div class="item item20">20</div>
-    <div class="item item21">21</div>
-    <div class="item item22">22</div>
-    <div class="item item23">23</div>
-    <div class="item item24">24</div>
-    <div class="item item25">25</div>
-  </div>
+
+<div class="container" id="container">
+    <div class="cube"></div>
+    <div class="cube"></div>
+    <div class="cube"></div>
+    <div class="cube"></div>
+    <div class="cube"></div>
+    <div class="cube"></div>
+    <div class="cube"></div>
+    <div class="cube"></div>
+    <div class="cube"></div>
+    <div class="cube"></div>
+    <div class="cube"></div>
+    <div class="cube"></div>
+</div>
 
 <script>
-//Your code goes here 
+const container = document.getElementById("container");
+let activeCube = null;
+let offsetX = 0, offsetY = 0;
+
+// Allow cube to become draggable by changing its position dynamically
+document.querySelectorAll(".cube").forEach(cube => {
+    cube.addEventListener("mousedown", (e) => {
+        activeCube = cube;
+        
+        // switch cube to absolute position to freely move
+        const rect = cube.getBoundingClientRect();
+        const containerRect = container.getBoundingClientRect();
+        activeCube.style.position = "absolute";
+        activeCube.style.left = rect.left - containerRect.left + "px";
+        activeCube.style.top = rect.top - containerRect.top + "px";
+        
+        offsetX = e.clientX - rect.left;
+        offsetY = e.clientY - rect.top;
+
+        container.appendChild(activeCube); // bring to front
+    });
+});
+
+document.addEventListener("mousemove", (e) => {
+    if (!activeCube) return;
+
+    const containerRect = container.getBoundingClientRect();
+    let newX = e.clientX - containerRect.left - offsetX;
+    let newY = e.clientY - containerRect.top - offsetY;
+
+    // boundaries
+    newX = Math.max(0, Math.min(newX, containerRect.width - activeCube.offsetWidth));
+    newY = Math.max(0, Math.min(newY, containerRect.height - activeCube.offsetHeight));
+
+    activeCube.style.left = newX + "px";
+    activeCube.style.top = newY + "px";
+});
+
+document.addEventListener("mouseup", () => {
+    activeCube = null; // drop cube
+});
 </script>
 
-  </body>
+</body>
 </html>
+
