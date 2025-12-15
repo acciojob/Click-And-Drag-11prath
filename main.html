@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Draggable Cubes</title>
+<title>Draggable HTML Elements</title>
 
 <style>
     * {
@@ -10,6 +10,13 @@
         user-select: none;
     }
 
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+    }
+
+    /* Container */
     .container {
         width: 600px;
         height: 400px;
@@ -21,15 +28,17 @@
         grid-template-rows: repeat(3, 1fr);
         gap: 10px;
         padding: 10px;
+        background: #f4f4f4;
     }
 
+    /* Cube */
     .cube {
         background: #4db8ff;
         border: 2px solid #005f91;
         border-radius: 8px;
-        transition: background 0.2s;
         cursor: grab;
         position: relative;
+        transition: background 0.2s;
     }
 
     .cube:active {
@@ -38,6 +47,7 @@
     }
 </style>
 </head>
+
 <body>
 
 <div class="container" id="container">
@@ -58,35 +68,41 @@
 <script>
 const container = document.getElementById("container");
 let activeCube = null;
-let offsetX = 0, offsetY = 0;
+let offsetX = 0;
+let offsetY = 0;
 
-// Allow cube to become draggable by changing its position dynamically
+// Attach drag behavior to each cube
 document.querySelectorAll(".cube").forEach(cube => {
     cube.addEventListener("mousedown", (e) => {
         activeCube = cube;
-        
-        // switch cube to absolute position to freely move
-        const rect = cube.getBoundingClientRect();
-        const containerRect = container.getBoundingClientRect();
-        activeCube.style.position = "absolute";
-        activeCube.style.left = rect.left - containerRect.left + "px";
-        activeCube.style.top = rect.top - containerRect.top + "px";
-        
-        offsetX = e.clientX - rect.left;
-        offsetY = e.clientY - rect.top;
 
-        container.appendChild(activeCube); // bring to front
+        const cubeRect = cube.getBoundingClientRect();
+        const containerRect = container.getBoundingClientRect();
+
+        // Convert grid item to absolute positioned element
+        activeCube.style.position = "absolute";
+        activeCube.style.left = cubeRect.left - containerRect.left + "px";
+        activeCube.style.top = cubeRect.top - containerRect.top + "px";
+
+        // Calculate mouse offset
+        offsetX = e.clientX - cubeRect.left;
+        offsetY = e.clientY - cubeRect.top;
+
+        // Bring cube to front
+        container.appendChild(activeCube);
     });
 });
 
+// Move cube with mouse
 document.addEventListener("mousemove", (e) => {
     if (!activeCube) return;
 
     const containerRect = container.getBoundingClientRect();
+
     let newX = e.clientX - containerRect.left - offsetX;
     let newY = e.clientY - containerRect.top - offsetY;
 
-    // boundaries
+    // Boundary constraints
     newX = Math.max(0, Math.min(newX, containerRect.width - activeCube.offsetWidth));
     newY = Math.max(0, Math.min(newY, containerRect.height - activeCube.offsetHeight));
 
@@ -94,11 +110,13 @@ document.addEventListener("mousemove", (e) => {
     activeCube.style.top = newY + "px";
 });
 
+// Drop cube
 document.addEventListener("mouseup", () => {
-    activeCube = null; // drop cube
+    activeCube = null;
 });
 </script>
 
 </body>
 </html>
+
 
