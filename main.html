@@ -1,122 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Draggable HTML Elements</title>
-
-<style>
-    * {
-        box-sizing: border-box;
-        user-select: none;
-    }
-
-    body {
-        margin: 0;
-        padding: 0;
-        font-family: Arial, sans-serif;
-    }
-
-    /* Container */
-    .container {
-        width: 600px;
-        height: 400px;
-        border: 3px solid #333;
-        margin: 30px auto;
-        position: relative;
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        grid-template-rows: repeat(3, 1fr);
-        gap: 10px;
-        padding: 10px;
-        background: #f4f4f4;
-    }
-
-    /* Cube */
-    .cube {
-        background: #4db8ff;
-        border: 2px solid #005f91;
-        border-radius: 8px;
-        cursor: grab;
-        position: relative;
-        transition: background 0.2s;
-    }
-
-    .cube:active {
-        cursor: grabbing;
-        background: #1ca3ff;
-    }
-</style>
+  <meta charset="UTF-8">
+  <title>Draggable Cubes</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
 
-<div class="container" id="container">
-    <div class="cube"></div>
-    <div class="cube"></div>
-    <div class="cube"></div>
-    <div class="cube"></div>
-    <div class="cube"></div>
-    <div class="cube"></div>
-    <div class="cube"></div>
-    <div class="cube"></div>
-    <div class="cube"></div>
-    <div class="cube"></div>
-    <div class="cube"></div>
-    <div class="cube"></div>
+<div class="container">
+  <div class="items"></div>
+  <div class="items"></div>
+  <div class="items"></div>
+  <div class="items"></div>
 </div>
 
-<script>
-const container = document.getElementById("container");
-let activeCube = null;
-let offsetX = 0;
-let offsetY = 0;
-
-// Attach drag behavior to each cube
-document.querySelectorAll(".cube").forEach(cube => {
-    cube.addEventListener("mousedown", (e) => {
-        activeCube = cube;
-
-        const cubeRect = cube.getBoundingClientRect();
-        const containerRect = container.getBoundingClientRect();
-
-        // Convert grid item to absolute positioned element
-        activeCube.style.position = "absolute";
-        activeCube.style.left = cubeRect.left - containerRect.left + "px";
-        activeCube.style.top = cubeRect.top - containerRect.top + "px";
-
-        // Calculate mouse offset
-        offsetX = e.clientX - cubeRect.left;
-        offsetY = e.clientY - cubeRect.top;
-
-        // Bring cube to front
-        container.appendChild(activeCube);
-    });
-});
-
-// Move cube with mouse
-document.addEventListener("mousemove", (e) => {
-    if (!activeCube) return;
-
-    const containerRect = container.getBoundingClientRect();
-
-    let newX = e.clientX - containerRect.left - offsetX;
-    let newY = e.clientY - containerRect.top - offsetY;
-
-    // Boundary constraints
-    newX = Math.max(0, Math.min(newX, containerRect.width - activeCube.offsetWidth));
-    newY = Math.max(0, Math.min(newY, containerRect.height - activeCube.offsetHeight));
-
-    activeCube.style.left = newX + "px";
-    activeCube.style.top = newY + "px";
-});
-
-// Drop cube
-document.addEventListener("mouseup", () => {
-    activeCube = null;
-});
-</script>
+<script src="script.js"></script>
 
 </body>
 </html>
-
 
